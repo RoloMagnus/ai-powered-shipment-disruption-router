@@ -1,0 +1,17 @@
+# Local credentials and environment files
+config.json
+.env
+.env.*
+!.env.example
+
+# Local Python and notebook state
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Generated vector stores and local editor state
+chroma_db/
+.chroma/
+.vscode/

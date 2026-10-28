@@ -1,0 +1,15 @@
+langchain
+langchain-core
+langchain-openai
+langgraph
+langsmith
+langchain-huggingface
+langchain-chroma
+langchain-text-splitters
+sentence-transformers
+pandas
+numpy
+pydantic
+python-dotenv
+tiktoken
+ipykernel
