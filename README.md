@@ -48,3 +48,19 @@ outputs again before committing future runs.
 
 The notebook retains its original educational content and attribution.
 No new license is granted for third-party course materials.
+
+## Daily automated commit
+
+[Daily empty commit](.github/workflows/daily-commit.yml) creates an empty commit
+on `main` every day at approximately **9:17 AM America/Chicago**, accounting for
+daylight saving time. It runs on GitHub even when your computer is turned off.
+It does not upload local changes, run the notebook, or call any AI services.
+Commits are attributed to `github-actions[bot]`, not your personal contribution
+activity.
+
+The workflow can also be started from the repository's **Actions** tab using
+**Daily empty commit > Run workflow**. GitHub may delay or drop scheduled runs.
+Actions must be enabled and branch rules must permit the workflow to push to
+`main`. GitHub can disable public-repository schedules after 60 days without
+repository activity; check the Actions tab if automated runs stop.
+Disable the workflow there whenever you want to stop daily commits.

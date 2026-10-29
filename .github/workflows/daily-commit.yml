@@ -1,0 +1,58 @@
+name: Daily empty commit
+
+on:
+  schedule:
+    # 09:17 America/Chicago: daylight time and standard time.
+    - cron: "17 14 * * *"
+    - cron: "17 15 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-empty-commit
+  cancel-in-progress: false
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Select the Chicago schedule
+        id: schedule
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_SCHEDULE: ${{ github.event.schedule }}
+        shell: python
+        run: |
+          import os
+          from datetime import datetime
+          from zoneinfo import ZoneInfo
+
+          now = datetime.now(ZoneInfo("America/Chicago"))
+          scheduled_utc_hour = 9 - int(now.utcoffset().total_seconds() // 3600)
+          expected = f"17 {scheduled_utc_hour} * * *"
+          should_run = (
+              os.environ["EVENT_NAME"] == "workflow_dispatch"
+              or os.environ["EVENT_SCHEDULE"] == expected
+          )
+          with open(os.environ["GITHUB_OUTPUT"], "a") as output:
+              output.write(f"run={str(should_run).lower()}\n")
+              output.write(f"date={now:%Y-%m-%d}\n")
+
+      - name: Check out main
+        if: steps.schedule.outputs.run == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Create and push an empty commit
+        if: steps.schedule.outputs.run == 'true'
+        env:
+          COMMIT_DATE: ${{ steps.schedule.outputs.date }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit --allow-empty -m "chore: daily empty commit ${COMMIT_DATE}"
+          git push origin HEAD:main
